@@ -55,6 +55,13 @@ const PersonaBuilder: React.FC<PersonaBuilderProps> = ({ onPersonaCreated }) => 
   const [isSavingConfig, setIsSavingConfig] = useState(false);
   const [newConfigName, setNewConfigName] = useState('');
 
+  // Delete Confirmation State
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean, configId: string | null, configName: string }>({
+    isOpen: false,
+    configId: null,
+    configName: ''
+  });
+
   // Training Simulation State
   const [isTraining, setIsTraining] = useState(false);
   const [trainingProgress, setTrainingProgress] = useState(0);
@@ -113,9 +120,16 @@ const PersonaBuilder: React.FC<PersonaBuilderProps> = ({ onPersonaCreated }) => 
     }
   };
 
-  const handleDeleteConfig = (id: string, e: React.MouseEvent) => {
+  const requestDeleteConfig = (id: string, name: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSavedConfigs(prev => prev.filter(c => c.id !== id));
+    setDeleteConfirmation({ isOpen: true, configId: id, configName: name });
+  };
+
+  const confirmDeleteConfig = () => {
+    if (deleteConfirmation.configId) {
+      setSavedConfigs(prev => prev.filter(c => c.id !== deleteConfirmation.configId));
+      setDeleteConfirmation({ isOpen: false, configId: null, configName: '' });
+    }
   };
 
   const handleStartTraining = () => {
@@ -676,7 +690,26 @@ const PersonaBuilder: React.FC<PersonaBuilderProps> = ({ onPersonaCreated }) => 
 
   const StepTraining = () => (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-brand-surface border border-brand-surfaceHighlight rounded-2xl p-8 min-h-[500px] flex flex-col justify-center transition-all">
+      <div className="bg-brand-surface border border-brand-surfaceHighlight rounded-2xl p-8 min-h-[500px] flex flex-col justify-center transition-all relative">
+        {/* Delete Confirmation Dialog */}
+        {deleteConfirmation.isOpen && (
+             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center rounded-2xl animate-fade-in">
+                 <div className="bg-brand-surface border border-brand-surfaceHighlight p-6 rounded-xl max-w-sm w-full mx-4 shadow-2xl">
+                     <div className="flex items-center space-x-3 mb-4 text-red-400">
+                         <AlertCircle size={24} />
+                         <h4 className="text-lg font-bold text-white">Delete Preset?</h4>
+                     </div>
+                     <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+                         Are you sure you want to delete <span className="text-white font-semibold">"{deleteConfirmation.configName}"</span>? This action cannot be undone.
+                     </p>
+                     <div className="flex justify-end gap-3">
+                         <button onClick={() => setDeleteConfirmation({ isOpen: false, configId: null, configName: '' })} className="px-4 py-2 text-sm text-gray-300 hover:text-white rounded-lg">Cancel</button>
+                         <button onClick={confirmDeleteConfig} className="px-4 py-2 text-sm bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-lg font-medium">Delete</button>
+                     </div>
+                 </div>
+             </div>
+        )}
+
         {!isTraining ? (
           // Configuration View
           <div className="space-y-6 animate-fade-in">
@@ -739,7 +772,7 @@ const PersonaBuilder: React.FC<PersonaBuilderProps> = ({ onPersonaCreated }) => 
                             {preset.name}
                             {!preset.isSystem && (
                                 <span 
-                                    onClick={(e) => handleDeleteConfig(preset.id, e)}
+                                    onClick={(e) => requestDeleteConfig(preset.id, preset.name, e)}
                                     className="ml-1 p-0.5 rounded-full hover:bg-red-500/20 text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                     <Trash2 size={10} />

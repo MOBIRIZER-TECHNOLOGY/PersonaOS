@@ -356,22 +356,77 @@ const Settings: React.FC = () => {
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Interface Theme</label>
               <div className="grid grid-cols-3 gap-4">
                   {[
-                      { id: 'dark', label: 'Dark Mode', icon: Moon },
-                      { id: 'light', label: 'Light Mode', icon: Sun },
-                      { id: 'system', label: 'System', icon: Monitor }
+                      { id: 'dark', label: 'Dark Mode' },
+                      { id: 'light', label: 'Light Mode' },
+                      { id: 'system', label: 'System' }
                   ].map((item) => (
                       <button
                         key={item.id}
                         // @ts-ignore
                         onClick={() => { setTheme(item.id); showToast(`Theme set to ${item.label}`); }}
-                        className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-3 transition-all ${
+                        className={`group relative p-4 rounded-xl border flex flex-col items-center gap-3 transition-all text-left overflow-hidden ${
                             theme === item.id 
-                            ? 'bg-brand-primary/20 border-brand-primary text-white' 
-                            : 'bg-brand-dark border-brand-surfaceHighlight text-gray-400 hover:border-gray-500'
+                            ? 'bg-brand-primary/10 border-brand-primary ring-1 ring-brand-primary' 
+                            : 'bg-brand-dark border-brand-surfaceHighlight hover:border-brand-primary/50'
                         }`}
                       >
-                          <item.icon size={24} />
-                          <span className="text-sm font-medium">{item.label}</span>
+                          {/* Visual Preview */}
+                          <div className="w-full aspect-video rounded-lg border border-brand-surfaceHighlight overflow-hidden relative shadow-sm">
+                             {item.id === 'dark' && (
+                                <div className="w-full h-full bg-[#0F172A] flex">
+                                   <div className="w-1/4 h-full bg-[#1E293B] border-r border-[#334155]"></div>
+                                   <div className="flex-1 p-2 space-y-2">
+                                      <div className="w-3/4 h-2 bg-[#334155] rounded-full"></div>
+                                      <div className="w-1/2 h-2 bg-[#334155]/50 rounded-full"></div>
+                                      <div className="mt-4 w-full h-12 bg-[#1E293B] rounded border border-[#334155]"></div>
+                                   </div>
+                                </div>
+                             )}
+                             {item.id === 'light' && (
+                                <div className="w-full h-full bg-[#F8FAFC] flex">
+                                   <div className="w-1/4 h-full bg-white border-r border-slate-200"></div>
+                                   <div className="flex-1 p-2 space-y-2">
+                                      <div className="w-3/4 h-2 bg-slate-300 rounded-full"></div>
+                                      <div className="w-1/2 h-2 bg-slate-200 rounded-full"></div>
+                                      <div className="mt-4 w-full h-12 bg-white rounded border border-slate-200"></div>
+                                   </div>
+                                </div>
+                             )}
+                             {item.id === 'system' && (
+                                <div className="w-full h-full flex">
+                                   <div className="w-1/2 h-full bg-[#0F172A] flex border-r border-[#334155]">
+                                      <div className="w-1/4 h-full bg-[#1E293B]"></div>
+                                      <div className="flex-1 p-2 space-y-2">
+                                         <div className="w-full h-1.5 bg-[#334155] rounded-full"></div>
+                                         <div className="w-1/2 h-1.5 bg-[#334155]/50 rounded-full"></div>
+                                      </div>
+                                   </div>
+                                   <div className="w-1/2 h-full bg-[#F8FAFC] flex">
+                                      <div className="w-1/4 h-full bg-white border-r border-slate-200"></div>
+                                      <div className="flex-1 p-2 space-y-2">
+                                         <div className="w-full h-1.5 bg-slate-300 rounded-full"></div>
+                                         <div className="w-1/2 h-1.5 bg-slate-200 rounded-full"></div>
+                                      </div>
+                                   </div>
+                                </div>
+                             )}
+                             
+                             {/* Active Checkmark overlay */}
+                             {theme === item.id && (
+                                 <div className="absolute inset-0 flex items-center justify-center bg-brand-primary/10 backdrop-blur-[1px]">
+                                     <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center shadow-lg">
+                                        <CheckCircle size={16} />
+                                     </div>
+                                 </div>
+                             )}
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                             {item.id === 'dark' && <Moon size={16} className={theme === item.id ? 'text-brand-primary' : 'text-gray-500'} />}
+                             {item.id === 'light' && <Sun size={16} className={theme === item.id ? 'text-brand-primary' : 'text-gray-500'} />}
+                             {item.id === 'system' && <Monitor size={16} className={theme === item.id ? 'text-brand-primary' : 'text-gray-500'} />}
+                             <span className={`text-sm font-medium ${theme === item.id ? 'text-white' : 'text-gray-400'}`}>{item.label}</span>
+                          </div>
                       </button>
                   ))}
               </div>
