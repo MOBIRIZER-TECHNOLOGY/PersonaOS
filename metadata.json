@@ -1,0 +1,7 @@
+{
+  "name": "PersonaOS",
+  "description": "The Operating System for Realistic Digital Personas. Create, own, and deploy high-fidelity AI beings with cognitive modeling, memory, and multi-modal knowledge.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
